@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CreateOrderComponent from "@/app/(components)/create-order-component";
 
 export interface Order {
     id: number;
@@ -19,23 +20,28 @@ export default async function Home() {
     const orders = await res.json();
     return (
         <div className="p-5">
-            <div className="flex justify-between">
+            <div className="flex justify-between mb-4">
                 <strong>Dashboard</strong>
-                <button className={"bg-blue-800 p-2 text-white rounded hover:bg-blue-400"}>Create order</button>
+                <CreateOrderComponent/>
             </div>
-            {orders.map((order: Order) => (
-                <li key={order.id} className="flex justify-between border p-3 m-1 rounded max-w-[30%] min-w-64">
-                    <div>
-                        <p><strong>Order #{order.id}</strong></p>
-                        <p>Status: {order.order_status}</p>
-                        <p>Payment: {order.payment_status} ({order.payment_method})</p>
-                        <p>Created At: {order.created_at}</p>
+
+            <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+                {orders.map((order: Order) => (
+                    <div key={order.id}
+                        className="flex justify-between p-4 border rounded shadow bg-white">
+                        <div>
+                            <p className="font-bold">Order #{order.id}</p>
+                            <p>Status: {order.order_status}</p>
+                            <p>Payment: {order.payment_status} ({order.payment_method})</p>
+                            <p className="text-gray-500">Created At: {order.created_at}</p>
+                        </div>
+                        <span className="text-gray-500 self-center pr-3">
+                            <Link href={`/order/${order.id}`}>&gt;</Link>
+                        </span>
                     </div>
-                    <span className="text-gray-500 content-center">
-                        <Link href={`/order/${order.id}`}>&gt;</Link>
-                    </span>
-                </li>
-            ))}
+                ))}
+            </div>
         </div>
+
     );
 }

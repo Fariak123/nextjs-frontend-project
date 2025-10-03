@@ -45,11 +45,11 @@ export default async function OrderPage({params}: { params: Promise<{ id: string
 
             <h1><strong>Order #{order.id}</strong></h1>
             {
-                <li key={order.id} className="flex border p-3 m-1 rounded max-w-[30%] min-w-64">
+                <li key={order.id} className="flex border p-3 m-1 rounded max-w-[350px] min-w-64">
                     <div>
                         <p>Status: {order.order_status}</p>
                         <p>Payment: {order.payment_status} ({order.payment_method})</p>
-                        <p>Created At: {order.created_at}</p>
+                        <p className="text-gray-500">Created At: {order.created_at}</p>
                     </div>
                 </li>
             }
