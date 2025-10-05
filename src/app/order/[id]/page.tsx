@@ -1,6 +1,7 @@
 import {Order} from "@/app/page";
 import Link from "next/link";
 import DeleteOrderComponent from "@/app/order/[id]/(components)/delete-order-component";
+import DeleteOrderItemComponent from "@/app/order/[id]/(components)/delete-order-item-component";
 
 interface OrderItem {
     id: number;
@@ -53,15 +54,22 @@ export default async function OrderPage({params}: { params: Promise<{ id: string
                     </div>
                 </li>
             }
+            <div className={"place-self-end"}>
+                <Link href={`/order/${id}/item/create`} className={"rounded p-2 text-white bg-blue-800 hover:bg-blue-400"}>
+                    Add Item
+                </Link>
+            </div>
             { orderItems.length > 0 ? (
-                <table className={"min-w-full divide-y divide-gray-200 text-sm"}>
+                <table className={"mt-4 min-w-full divide-y divide-gray-200 text-sm"}>
                     <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-4 py-2 text-left font-medium text-gray-600">ID</th>
-                            <th className="px-4 py-2 text-left font-medium text-gray-600">Name</th>
-                            <th className="px-4 py-2 text-left font-medium text-gray-600">price</th>
-                            <th className="px-4 py-2 text-left font-medium text-gray-600">Quantity</th>
-                        </tr>
+                    <tr>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">ID</th>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">Name</th>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">price</th>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">Quantity</th>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">{""}</th>
+
+                    </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
                     {orderItems.map((item: OrderItem) => (
@@ -69,7 +77,10 @@ export default async function OrderPage({params}: { params: Promise<{ id: string
                             <td className="px-4 py-2">{item.id}</td>
                             <td className="px-4 py-2">{item.name}</td>
                             <td className="px-4 py-2">£{item.price}</td>
-                            <td className="px-4 py-2">x{item.quantity}</td>
+                            <td className="px-4">x{item.quantity}</td>
+                            <td>
+                                <DeleteOrderItemComponent id={item.orderId}  itemId={item.id}/>
+                            </td>
                         </tr>
                     ))}
                     </tbody>

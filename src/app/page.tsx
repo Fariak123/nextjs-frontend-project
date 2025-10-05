@@ -25,7 +25,7 @@ export default async function Home() {
                 <CreateOrderComponent/>
             </div>
 
-            <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+            <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
                 {orders.map((order: Order) => (
                     <div key={order.id}
                         className="flex justify-between p-4 border rounded shadow bg-white">
