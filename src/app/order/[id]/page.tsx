@@ -1,9 +1,9 @@
 import {Order} from "@/app/page";
 import Link from "next/link";
 import DeleteOrderComponent from "@/app/order/[id]/(components)/delete-order-component";
-import DeleteOrderItemComponent from "@/app/order/[id]/(components)/delete-order-item-component";
+import ItemDetailsPage from "@/app/order/[id]/items-details";
 
-interface OrderItem {
+export interface OrderItem {
     id: number;
     name: string;
     price: number;
@@ -54,40 +54,7 @@ export default async function OrderPage({params}: { params: Promise<{ id: string
                     </div>
                 </li>
             }
-            <div className={"place-self-end"}>
-                <Link href={`/order/${id}/item/create`} className={"rounded p-2 text-white bg-blue-800 hover:bg-blue-400"}>
-                    Add Item
-                </Link>
-            </div>
-            { orderItems.length > 0 ? (
-                <table className={"mt-4 min-w-full divide-y divide-gray-200 text-sm"}>
-                    <thead className="bg-gray-50">
-                    <tr>
-                        <th className="px-4 py-2 text-left font-medium text-gray-600">ID</th>
-                        <th className="px-4 py-2 text-left font-medium text-gray-600">Name</th>
-                        <th className="px-4 py-2 text-left font-medium text-gray-600">price</th>
-                        <th className="px-4 py-2 text-left font-medium text-gray-600">Quantity</th>
-                        <th className="px-4 py-2 text-left font-medium text-gray-600">{""}</th>
-
-                    </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 bg-white">
-                    {orderItems.map((item: OrderItem) => (
-                        <tr key={item.id} className="hover:bg-gray-50">
-                            <td className="px-4 py-2">{item.id}</td>
-                            <td className="px-4 py-2">{item.name}</td>
-                            <td className="px-4 py-2">£{item.price}</td>
-                            <td className="px-4">x{item.quantity}</td>
-                            <td>
-                                <DeleteOrderItemComponent id={item.orderId}  itemId={item.id}/>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            ) : (<div className={"flex place-content-center px-12 pt-8 text-gray-600 bg-gray-50 mt-5"}>
-                No Items Registered
-            </div>)}
+            <ItemDetailsPage id={id} orderItems={orderItems} />
         </div>
     );
 }

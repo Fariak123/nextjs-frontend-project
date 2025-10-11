@@ -1,6 +1,7 @@
 "use client";
-import { useRouter, useParams } from "next/navigation";
-import {useState} from "react";
+
+import {ChangeEvent, useEffect, useState} from "react";
+import {useParams, useRouter} from "next/navigation";
 
 type FormState = {
     name: string;
@@ -8,20 +9,21 @@ type FormState = {
     quantity: number | "";
 };
 
-export default function OrderItemCreatePage() {
+export default function ItemEditPage() {
     const router = useRouter();
-    const { id } = useParams();
-
+    const { id, itemId } = useParams();
     const [form, setForm] = useState<FormState>({
         name: "",
         price: "",
         quantity: "",
     });
 
+
+
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
 
         if (type === "number") {
@@ -43,26 +45,46 @@ export default function OrderItemCreatePage() {
 
         try {
             setLoading(true);
-            const res = await fetch(`http://localhost:8000/order/${id}/item/create`, {
-                method: "POST",
+            const res = await fetch(`http://localhost:8000/order/${id}/item/${itemId}/edit`, {
+                method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     name: form.name,
                     price: form.price,
                     quantity: form.quantity,
-                    orderId: id
                 })
             })
-           if (!res.ok) throw new Error(`Failed with status ${res.status}`);
-           setForm({ name: "", price: "", quantity: "" });
+            if (!res.ok) throw new Error(`Failed with status ${res.status}`);
+            setForm({ name: "", price: "", quantity: "" });
             router.push(`/order/${id}`);
             router.refresh();
         } catch (error: any) {
-            setErr(error.message ?? "Submit failed!");
+            setErr(error.message ?? "Edit failed!");
         } finally {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        async function loadOrders() {
+            try {
+                const res = await fetch(`http://localhost:8000/order/${id}/item/${itemId}`, {
+                    method: "GET",
+                    cache: "no-store",
+                });
+                if (!res.ok) {
+                    throw new Error("Failed to fetch order items.");
+                }
+                const data = await res.json();
+                setForm(data);
+            } catch (err) {
+                console.error("Failed to load orders:", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadOrders();
+    }, []);
 
     return (
         <div className="p-3 w-[80%] sm:w-[60%] md:w-[40%] mx-auto place-self-center">
@@ -77,7 +99,8 @@ export default function OrderItemCreatePage() {
                     <fieldset>
                         <div className="mt-6 space-y-3">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 min-w-[64px]" htmlFor="name">Item name</label>
+                                <label className="block text-sm font-medium text-gray-700 min-w-[64px]" htmlFor="name">Item
+                                    name</label>
                                 <input
                                     id="name"
                                     name="name"
@@ -85,7 +108,7 @@ export default function OrderItemCreatePage() {
                                     value={form.name}
                                     onChange={handleChange}
                                     className="mt-1 w-full rounded border px-3 py-2"
-                                    placeholder="Notebook"
+                                    placeholder={form.name}
                                 />
                             </div>
 
@@ -102,7 +125,7 @@ export default function OrderItemCreatePage() {
                                     value={form.price}
                                     onChange={handleChange}
                                     className="mt-1 w-full rounded border px-3 py-2"
-                                    placeholder="3.99"
+                                    placeholder={form.price.toString()}
                                 />
                             </div>
 
@@ -118,7 +141,7 @@ export default function OrderItemCreatePage() {
                                     value={form.quantity}
                                     onChange={handleChange}
                                     className="mt-1 w-full rounded border px-3 py-2"
-                                    placeholder="1"
+                                    placeholder={form.quantity.toString()}
                                 />
                             </div>
                         </div>
@@ -126,7 +149,7 @@ export default function OrderItemCreatePage() {
                             <button
                                 type="submit"
                                 className="mt-10 px-4 py-2 bg-green-400 rounded text-white hover:bg-green-700">
-                                {loading ? "Submitting..." : "Submit Item"}
+                                {loading ? "Editing..." : "Edit Item"}
                             </button>
                         </div>
                     </fieldset>
